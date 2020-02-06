@@ -1,0 +1,27 @@
+
+pong.png
+size: 64,512
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+ball
+  rotate: false
+  xy: 8, 320
+  size: 32, 32
+  orig: 128, 128
+  offset: 28, 78
+  index: -1
+paddle
+  rotate: false
+  xy: 8, 354
+  size: 40, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
+screenBar
+  rotate: false
+  xy: 2, 2
+  size: 4, 480
+  orig: 800, 480
+  offset: 15, 0
+  index: -1
