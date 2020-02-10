@@ -22,7 +22,6 @@ public class GameWonScreen extends InputAdapter implements PongScreen {
         Table table = new Table();
         table.top();
         table.setFillParent(true);
-        Gdx.input.setInputProcessor(this);
 
         Label title = new Label(playerWon ? "YOU WON!" : "YOU LOST", screenManager.getSkin());
         table.add(title).expandX().padTop(50);
@@ -47,6 +46,7 @@ public class GameWonScreen extends InputAdapter implements PongScreen {
                 screenManager.set(new MenuScreen());
             }
         });
+        Gdx.input.setInputProcessor(stage);
         table.add(mainMenuButton).width(PongGame.V_WIDTH/3).space(5,0,5,0).expandX().padTop(50);
         stage.addActor(table);
     }
