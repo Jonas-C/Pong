@@ -3,11 +3,13 @@ package ec.pong.sprites;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import ec.pong.PongGame;
-
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
-public class Ball {
+public class Ball implements Observable {
 
     private static final int VELOCITY = 300;
     private final float COLLISION_IGNORE_PERIOD = 0.20f;
@@ -18,19 +20,24 @@ public class Ball {
     private float timeSincePaddleCollision;
     private int additionalSpeed;
 
+    List<Observer> observers;
+
     private Sprite ballSprite;
     private Random rand;
     Vector2 pos;
     Vector2 velocity;
     Rectangle bounds;
+    private Array<Paddle> paddles;
 
-    public Ball(float x, float y, Sprite sprite){
+    public Ball(float x, float y, Sprite sprite, Array<Paddle> paddles){
         pos = new Vector2(x, y);
+        this.paddles = paddles;
         timeSincePaddleCollision = 0;
         initPosX = x;
         initPosY = y;
         additionalSpeed = 0;
         this.ballSprite = sprite;
+        observers = new ArrayList<>();
         rand = new Random();
         velocity = new Vector2(-(VELOCITY), (rand.nextInt(15) +1) * 15);
         bounds = new Rectangle(x, y, ballSprite.getRegionWidth(), ballSprite.getRegionHeight());
@@ -44,7 +51,7 @@ public class Ball {
         return pos;
     }
 
-    public void paddleBounce(Rectangle bounds){
+    private void paddleBounce(Rectangle bounds){
         if(timeSincePaddleCollision > COLLISION_IGNORE_PERIOD){
             additionalSpeed += 5;
             boolean positiveVelocity = velocity.x > 0;
@@ -56,6 +63,7 @@ public class Ball {
                 velocity.x = -(velocity.x); //for enemy paddle
             }
             timeSincePaddleCollision = 0;
+            notifyObservers();
         }
     }
 
@@ -63,19 +71,14 @@ public class Ball {
         velocity.y = -(velocity.y);
     }
 
-    public boolean isColliding(Rectangle paddleBounds){
+    private boolean isColliding(Rectangle paddleBounds){
         return bounds.overlaps(paddleBounds);
     }
 
-    private boolean isCollidingWall(){
-        if(pos.y < 0){
-            pos.y = 0;
-            return true;
-        } else if(pos.y + ballSprite.getRegionHeight() > PongGame.V_HEIGHT){
-            pos.y = PongGame.V_HEIGHT - ballSprite.getRegionHeight();
-            return true;
-        } else {
-            return false;
+    private void checkWallCollision(){
+        if(pos.y < 0 || pos.y + ballSprite.getRegionHeight() > PongGame.V_HEIGHT){
+            pos.y = pos.y < 0 ? 0 : PongGame.V_HEIGHT - ballSprite.getRegionHeight();
+            wallBounce();
         }
     }
 
@@ -87,8 +90,20 @@ public class Ball {
         pos.add(velocity.x * delta, velocity.y  * delta);
         bounds.setPosition(pos);
         timeSincePaddleCollision += delta;
-        if(isCollidingWall()){
-            wallBounce();
+        checkCollision();
+    }
+
+    private void checkCollision(){
+        checkPaddleCollision();
+        checkWallCollision();
+    }
+
+    private void checkPaddleCollision(){
+        if(paddles == null) return;
+        for(Paddle paddle : paddles){
+            if(isColliding(paddle.bounds)){
+                paddleBounce(paddle.bounds);
+            }
         }
     }
 
@@ -97,5 +112,22 @@ public class Ball {
         pos.set(initPosX, initPosY);
         velocity.set(playerWon ? -(VELOCITY) : VELOCITY, (rand.nextInt(15) +1) * (rand.nextFloat() > 0.5f ? 15 : -15));
         bounds.setPosition(pos);
+    }
+
+    @Override
+    public void register(Observer obj) {
+        observers.add(obj);
+    }
+
+    @Override
+    public void unregister(Observer obj) {
+        observers.remove(obj);
+    }
+
+    @Override
+    public void notifyObservers() {
+        for(Observer observer : observers){
+            observer.receiveNotification(this);
+        }
     }
 }

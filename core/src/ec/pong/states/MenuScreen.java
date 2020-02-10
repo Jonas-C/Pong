@@ -16,7 +16,8 @@ public class MenuScreen implements Screen {
 
     private Stage stage;
 
-    public MenuScreen(final PongGame game){
+    public MenuScreen(){
+        final PongGame game = PongGame.getInstance();
         stage = new Stage(new ExtendViewport(PongGame.V_WIDTH, PongGame.V_HEIGHT), game.batch);
         Table table = new Table();
         table.top();
@@ -31,7 +32,7 @@ public class MenuScreen implements Screen {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor){
                 dispose();
-                game.setScreen(new DifficultyScreen(game));
+                game.setScreen(new DifficultyScreen());
             }
         });
         table.add(playButton).width(PongGame.V_WIDTH / 3).spaceTop(5).spaceBottom(5).expandX().padTop(50);

@@ -17,7 +17,8 @@ public class GameWonScreen extends InputAdapter implements Screen {
 
     private Stage stage;
 
-    GameWonScreen(final PongGame game, boolean playerWon, final float difficulty){
+    GameWonScreen(boolean playerWon, final float difficulty){
+        final PongGame game = PongGame.getInstance();
         stage = new Stage(new ExtendViewport(PongGame.V_WIDTH, PongGame.V_HEIGHT), game.batch);
         Table table = new Table();
         table.top();
@@ -33,7 +34,7 @@ public class GameWonScreen extends InputAdapter implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 dispose();
-                game.setScreen(new SoloPlayScreen(game, difficulty));
+                game.setScreen(new SoloPlayScreen(difficulty));
             }
         });
         table.add(retryButton).width(PongGame.V_WIDTH/3).space(5,0,5,0).expandX().padTop(50);
@@ -44,7 +45,7 @@ public class GameWonScreen extends InputAdapter implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 dispose();
-                game.setScreen(new MenuScreen(game));
+                game.setScreen(new MenuScreen());
             }
         });
         table.add(mainMenuButton).width(PongGame.V_WIDTH/3).space(5,0,5,0).expandX().padTop(50);

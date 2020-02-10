@@ -20,7 +20,7 @@ public class PongGame extends Game {
 		batch = new SpriteBatch();
 		font = new BitmapFont();
 		skin = new Skin(Gdx.files.internal("skin/uiskin.json"));
-		setScreen(new MenuScreen(this));
+		setScreen(new MenuScreen());
 	}
 
 	@Override
@@ -32,5 +32,9 @@ public class PongGame extends Game {
 	public void dispose () {
 		batch.dispose();
 		font.dispose();
+	}
+
+	public static PongGame getInstance(){
+		return (PongGame)Gdx.app.getApplicationListener();
 	}
 }

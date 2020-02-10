@@ -3,7 +3,7 @@ package ec.pong.sprites;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.math.Vector2;
 
-public class AiPaddle extends Paddle{
+public class AiPaddle extends Paddle implements Observer{
     private Vector2 desiredPos;
     private float centerPoint;
     /*
@@ -21,7 +21,7 @@ public class AiPaddle extends Paddle{
         centerPoint = getPaddleSprite().getRegionHeight() / 2;
     }
 
-    public void setDesiredYPos(Vector2 desiredPos){
+    private void setDesiredYPos(Vector2 desiredPos){
         this.desiredPos.set(desiredPos.x, (int)desiredPos.y + (desiredPos.y > pos.y ? centerPoint : -(centerPoint)));
     }
 
@@ -40,4 +40,8 @@ public class AiPaddle extends Paddle{
         desiredPos.set(pos.x, pos.y);
     }
 
+    @Override
+    public void receiveNotification(Object obj) {
+        setDesiredYPos((Vector2) obj);
+    }
 }

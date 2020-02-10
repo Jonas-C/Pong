@@ -16,7 +16,8 @@ public class DifficultyScreen implements Screen {
 
     private Stage stage;
 
-    DifficultyScreen(final PongGame game){
+    DifficultyScreen(){
+        final PongGame game = PongGame.getInstance();
         stage = new Stage(new ExtendViewport(PongGame.V_WIDTH, PongGame.V_HEIGHT), game.batch);
         Table table = new Table();
         table.top();
@@ -31,7 +32,7 @@ public class DifficultyScreen implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 dispose();
-                game.setScreen(new SoloPlayScreen(game, 100));
+                game.setScreen(new SoloPlayScreen(100));
             }
         });
         table.add(easyButton).width(PongGame.V_WIDTH / 3).spaceTop(5).spaceBottom(5).expandX().padTop(50);
@@ -42,7 +43,7 @@ public class DifficultyScreen implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 dispose();
-                game.setScreen(new SoloPlayScreen(game, 300));
+                game.setScreen(new SoloPlayScreen(300));
             }
         });
         table.add(mediumButton).width(PongGame.V_WIDTH / 3).spaceTop(5).spaceBottom(5).expandX().padTop(50);
@@ -53,7 +54,7 @@ public class DifficultyScreen implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 dispose();
-                game.setScreen(new SoloPlayScreen(game, 500));
+                game.setScreen(new SoloPlayScreen(500));
             }
         });
         table.add(hardButton).width(PongGame.V_WIDTH / 3).spaceTop(5).spaceBottom(5).expandX().padTop(50);
