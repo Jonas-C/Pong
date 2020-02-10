@@ -18,12 +18,9 @@ public class Hud {
     private Label playerScoreLabel;
     private Label enemyScoreLabel;
 
-    private ScreenManager screenManager;
-
-
 
     public Hud(){
-        screenManager = ScreenManager.getInstance();
+        ScreenManager screenManager = ScreenManager.getInstance();
         playerScore = 0;
         enemyScore = 0;
         stage = new Stage(new ExtendViewport(PongGame.V_WIDTH, PongGame.V_HEIGHT), screenManager.getBatch());

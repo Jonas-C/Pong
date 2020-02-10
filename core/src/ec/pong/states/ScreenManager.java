@@ -59,7 +59,7 @@ public class ScreenManager {
         return font;
     }
 
-    public Skin getSkin() {
+    Skin getSkin() {
         return skin;
     }
 

@@ -1,5 +1,6 @@
 package ec.pong.states;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -38,9 +39,16 @@ public class SoloPlayScreen implements PongScreen {
         difficulty = enemyMovementSpeed;
         cam = new OrthographicCamera();
         viewport = new ExtendViewport(PongGame.V_WIDTH, PongGame.V_HEIGHT, cam);
-        System.out.println(viewport.getScreenHeight());
-        System.out.println(viewport.getScreenY());
-        System.out.println(PongGame.V_HEIGHT);
+        /*
+            After implementing the singleton ScreenManager the viewport started acting up.
+            Screen Height/Width and World Height/Width  would be set to 0. The following five lines
+            fixed the issue.
+         */
+        viewport.setScreenHeight(Gdx.graphics.getHeight());
+        viewport.setScreenWidth(Gdx.graphics.getWidth());
+        viewport.setWorldHeight(PongGame.V_HEIGHT);
+        viewport.setWorldWidth(PongGame.V_WIDTH);
+        cam.setToOrtho(false, PongGame.V_WIDTH, PongGame.V_HEIGHT);
         viewport.apply();
         textures = new TextureAtlas("pong.atlas");
         Sprite paddleSprite = textures.createSprite("paddle");
@@ -113,6 +121,7 @@ public class SoloPlayScreen implements PongScreen {
 
     @Override
     public void resize(int width, int height) {
+        System.out.println("UPDATE");
         viewport.update(width, height);
         cam.position.set(cam.viewportWidth/2, cam.viewportHeight/2, 0);
     }
