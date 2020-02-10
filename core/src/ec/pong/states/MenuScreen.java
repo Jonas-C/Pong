@@ -1,7 +1,6 @@
 package ec.pong.states;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -12,29 +11,32 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import ec.pong.PongGame;
 
-public class MenuScreen implements Screen {
+public class MenuScreen implements PongScreen {
 
     private Stage stage;
+    private ScreenManager screenManager;
 
     public MenuScreen(){
-        final PongGame game = PongGame.getInstance();
-        stage = new Stage(new ExtendViewport(PongGame.V_WIDTH, PongGame.V_HEIGHT), game.batch);
+        screenManager = ScreenManager.getInstance();
+        stage = new Stage(new ExtendViewport(PongGame.V_WIDTH, PongGame.V_HEIGHT), screenManager.getBatch());
         Table table = new Table();
+
         table.top();
         table.setFillParent(true);
 
-        Label title = new Label("PONG!", game.skin);
+        Label title = new Label("PONG!", screenManager.getSkin());
         table.add(title).expandX().padTop(50);
         table.row();
 
-        TextButton playButton = new TextButton("Play solo!", game.skin, "default");
+        TextButton playButton = new TextButton("Play solo!", screenManager.getSkin(), "default");
         playButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor){
-                dispose();
-                game.setScreen(new DifficultyScreen());
+                screenManager.set(new DifficultyScreen());
+
             }
         });
+        Gdx.input.setInputProcessor(stage);
         table.add(playButton).width(PongGame.V_WIDTH / 3).spaceTop(5).spaceBottom(5).expandX().padTop(50);
         stage.addActor(table);
 
@@ -46,8 +48,6 @@ public class MenuScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0,0, 0, 0);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.getCamera().update();
         stage.getBatch().setProjectionMatrix(stage.getCamera().combined);
         stage.act();
@@ -78,5 +78,10 @@ public class MenuScreen implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
+    }
+
+    @Override
+    public void update(float delta) {
+
     }
 }

@@ -2,7 +2,6 @@ package ec.pong.states;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputAdapter;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -13,39 +12,40 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import ec.pong.PongGame;
 
-public class GameWonScreen extends InputAdapter implements Screen {
+public class GameWonScreen extends InputAdapter implements PongScreen {
 
     private Stage stage;
+    private ScreenManager screenManager;
 
     GameWonScreen(boolean playerWon, final float difficulty){
-        final PongGame game = PongGame.getInstance();
-        stage = new Stage(new ExtendViewport(PongGame.V_WIDTH, PongGame.V_HEIGHT), game.batch);
+        screenManager = ScreenManager.getInstance();
+        stage = new Stage(new ExtendViewport(PongGame.V_WIDTH, PongGame.V_HEIGHT), screenManager.getBatch());
         Table table = new Table();
         table.top();
         table.setFillParent(true);
         Gdx.input.setInputProcessor(this);
 
-        Label title = new Label(playerWon ? "YOU WON!" : "YOU LOST", game.skin);
+        Label title = new Label(playerWon ? "YOU WON!" : "YOU LOST", screenManager.getSkin());
         table.add(title).expandX().padTop(50);
         table.row();
 
-        TextButton retryButton = new TextButton("Try again!", game.skin, "default");
+        TextButton retryButton = new TextButton("Try again!", screenManager.getSkin(), "default");
         retryButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 dispose();
-                game.setScreen(new SoloPlayScreen(difficulty));
+                screenManager.set(new SoloPlayScreen(difficulty));
             }
         });
         table.add(retryButton).width(PongGame.V_WIDTH/3).space(5,0,5,0).expandX().padTop(50);
         table.row();
 
-        TextButton mainMenuButton = new TextButton("Main Menu", game.skin, "default");
+        TextButton mainMenuButton = new TextButton("Main Menu", screenManager.getSkin(), "default");
         mainMenuButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 dispose();
-                game.setScreen(new MenuScreen());
+                screenManager.set(new MenuScreen());
             }
         });
         table.add(mainMenuButton).width(PongGame.V_WIDTH/3).space(5,0,5,0).expandX().padTop(50);
@@ -58,8 +58,6 @@ public class GameWonScreen extends InputAdapter implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0,0, 0, 0);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.getCamera().update();
         stage.getBatch().setProjectionMatrix(stage.getCamera().combined);
         stage.act();
@@ -90,5 +88,10 @@ public class GameWonScreen extends InputAdapter implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
+    }
+
+    @Override
+    public void update(float delta) {
+
     }
 }

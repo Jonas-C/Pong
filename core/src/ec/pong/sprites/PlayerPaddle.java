@@ -22,7 +22,10 @@ public class PlayerPaddle extends Paddle {
     @Override
     public boolean touchDown(int screenX, int screenY, int pointer, int button) {
         touchPos.set(screenX, screenY);
+        System.out.println(touchPos);
         viewport.unproject(touchPos);
+        System.out.println(touchPos);
+        System.out.println(bounds);
         if(bounds.contains(touchPos)){
             touchingPaddle = true;
             prevTouchY = touchPos.y;
@@ -42,6 +45,7 @@ public class PlayerPaddle extends Paddle {
             touchPos.set(screenX, screenY);
             viewport.unproject(touchPos);
             updatePosition(touchPos.y - prevTouchY);
+            System.out.println(pos.y);
             prevTouchY = touchPos.y;
         }
         return false;

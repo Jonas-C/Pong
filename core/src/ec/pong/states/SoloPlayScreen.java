@@ -1,10 +1,8 @@
 package ec.pong.states;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
@@ -18,9 +16,8 @@ import ec.pong.sprites.Paddle;
 import ec.pong.sprites.PlayerPaddle;
 import ec.pong.scenes.Hud;
 
-public class SoloPlayScreen implements Screen {
+public class SoloPlayScreen implements PongScreen {
 
-    private PongGame game;
     private Viewport viewport;
     private Hud hud;
     private TextureAtlas textures;
@@ -32,19 +29,25 @@ public class SoloPlayScreen implements Screen {
     private Sprite screenBarSprite;
     private Array<Paddle> paddles;
     private Paddle enemyPaddle;
+    private ScreenManager screenManager;
+    private SpriteBatch batch;
 
     SoloPlayScreen(float enemyMovementSpeed){
-        this.game = PongGame.getInstance();
+        screenManager = ScreenManager.getInstance();
+        batch = screenManager.getBatch();
         difficulty = enemyMovementSpeed;
         cam = new OrthographicCamera();
         viewport = new ExtendViewport(PongGame.V_WIDTH, PongGame.V_HEIGHT, cam);
+        System.out.println(viewport.getScreenHeight());
+        System.out.println(viewport.getScreenY());
+        System.out.println(PongGame.V_HEIGHT);
         viewport.apply();
         textures = new TextureAtlas("pong.atlas");
         Sprite paddleSprite = textures.createSprite("paddle");
         Sprite ballSprite = textures.createSprite("ball");
         screenBarSprite = textures.createSprite("screenBar");
         playerWon = false;
-        hud = new Hud(game.batch, game.font);
+        hud = new Hud();
         paddles = new Array<>();
         Paddle playerPaddle = new PlayerPaddle(50, (PongGame.V_HEIGHT/ 2) - paddleSprite.getRegionHeight() / 2, paddleSprite, viewport);
         enemyPaddle = new AiPaddle(PongGame.V_WIDTH - paddleSprite.getRegionWidth() - 50, (PongGame.V_HEIGHT/ 2) - paddleSprite.getRegionHeight() / 2, paddleSprite, enemyMovementSpeed);
@@ -63,21 +66,19 @@ public class SoloPlayScreen implements Screen {
     @Override
     public void render(float delta) {
         cam.update();
-        Gdx.gl.glClearColor(0,0, 0, 0);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        game.batch.setProjectionMatrix(cam.combined);
+        batch.setProjectionMatrix(cam.combined);
         hud.stage.draw();
-        game.batch.begin();
-        game.batch.draw(screenBarSprite, PongGame.V_WIDTH / 2, 0);
+        batch.begin();
+        batch.draw(screenBarSprite, PongGame.V_WIDTH / 2, 0);
         for(Paddle paddle : paddles){
-            game.batch.draw(paddle.getPaddleSprite(), paddle.getPos().x, paddle.getPos().y);
+            batch.draw(paddle.getPaddleSprite(), paddle.getPos().x, paddle.getPos().y);
         }
-        game.batch.draw(ball.getBallSprite(), ball.getPos().x, ball.getPos().y);
-        update(delta);
-        game.batch.end();
+        batch.draw(ball.getBallSprite(), ball.getPos().x, ball.getPos().y);
+        batch.end();
     }
 
-    private void update(float delta){
+    @Override
+    public void update(float delta){
         ball.update(delta);
         aiBall.update(delta);
         for(Paddle paddle : paddles){
@@ -97,7 +98,7 @@ public class SoloPlayScreen implements Screen {
         hud.updateScore(playerWon);
         if(hud.matchWon()){
             dispose();
-            game.setScreen(new GameWonScreen(playerWon, difficulty));
+            screenManager.set(new GameWonScreen(playerWon, difficulty));
         }
         resetMap();
     }

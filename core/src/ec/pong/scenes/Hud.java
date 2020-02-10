@@ -1,13 +1,12 @@
 package ec.pong.scenes;
 
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import ec.pong.PongGame;
+import ec.pong.states.ScreenManager;
 
 public class Hud {
 
@@ -19,18 +18,21 @@ public class Hud {
     private Label playerScoreLabel;
     private Label enemyScoreLabel;
 
+    private ScreenManager screenManager;
 
 
-    public Hud(SpriteBatch batch, BitmapFont font){
+
+    public Hud(){
+        screenManager = ScreenManager.getInstance();
         playerScore = 0;
         enemyScore = 0;
-        stage = new Stage(new ExtendViewport(PongGame.V_WIDTH, PongGame.V_HEIGHT), batch);
+        stage = new Stage(new ExtendViewport(PongGame.V_WIDTH, PongGame.V_HEIGHT), screenManager.getBatch());
 
         Table table = new Table();
         table.top();
         table.setFillParent(true);
 
-        Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
+        Label.LabelStyle labelStyle = new Label.LabelStyle(screenManager.getFont(), Color.WHITE);
         playerScoreLabel = new Label(playerScore.toString(), labelStyle);
         enemyScoreLabel = new Label(enemyScore.toString(), labelStyle);
 

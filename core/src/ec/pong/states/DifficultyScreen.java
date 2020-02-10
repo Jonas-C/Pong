@@ -1,63 +1,63 @@
 package ec.pong.states;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import ec.pong.PongGame;
 
-public class DifficultyScreen implements Screen {
+public class DifficultyScreen implements PongScreen {
 
     private Stage stage;
+    private ScreenManager screenManager;
 
     DifficultyScreen(){
-        final PongGame game = PongGame.getInstance();
-        stage = new Stage(new ExtendViewport(PongGame.V_WIDTH, PongGame.V_HEIGHT), game.batch);
+        screenManager = ScreenManager.getInstance();
+        Skin skin = screenManager.getSkin();
+        stage = new Stage(new ExtendViewport(PongGame.V_WIDTH, PongGame.V_HEIGHT), screenManager.getBatch());
         Table table = new Table();
         table.top();
         table.setFillParent(true);
 
-        Label title = new Label("Choose difficulty!", game.skin);
+        Label title = new Label("Choose difficulty!", skin);
         table.add(title).expandX().padTop(50);
         table.row();
 
-        TextButton easyButton = new TextButton("Easy", game.skin, "default");
+        TextButton easyButton = new TextButton("Easy", skin, "default");
         easyButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                dispose();
-                game.setScreen(new SoloPlayScreen(100));
+                screenManager.set(new SoloPlayScreen(100));
             }
         });
         table.add(easyButton).width(PongGame.V_WIDTH / 3).spaceTop(5).spaceBottom(5).expandX().padTop(50);
         table.row();
 
-        TextButton mediumButton = new TextButton("Medium", game.skin, "default");
+        TextButton mediumButton = new TextButton("Medium", skin, "default");
         mediumButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                dispose();
-                game.setScreen(new SoloPlayScreen(300));
+                screenManager.set(new SoloPlayScreen(300));
             }
         });
         table.add(mediumButton).width(PongGame.V_WIDTH / 3).spaceTop(5).spaceBottom(5).expandX().padTop(50);
         table.row();
 
-        TextButton hardButton = new TextButton("Hard", game.skin, "default");
+        TextButton hardButton = new TextButton("Hard", skin, "default");
         hardButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                dispose();
-                game.setScreen(new SoloPlayScreen(500));
+                screenManager.set(new SoloPlayScreen(500));
             }
         });
         table.add(hardButton).width(PongGame.V_WIDTH / 3).spaceTop(5).spaceBottom(5).expandX().padTop(50);
+        Gdx.input.setInputProcessor(stage);
 
         stage.addActor(table);
     }
@@ -69,8 +69,6 @@ public class DifficultyScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0,0, 0, 0);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         stage.getCamera().update();
         stage.getBatch().setProjectionMatrix(stage.getCamera().combined);
         stage.act();
@@ -101,5 +99,10 @@ public class DifficultyScreen implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
+    }
+
+    @Override
+    public void update(float delta) {
+
     }
 }
